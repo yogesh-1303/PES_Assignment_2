@@ -1,5 +1,7 @@
-#include "cbfifo.c"
-#include<assert.h>
+#include <stdio.h>
+#include <assert.h>
+
+#include "cbfifo.h"
 
 //#define NDEBUG
 

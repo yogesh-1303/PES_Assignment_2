@@ -1,12 +1,10 @@
-#include<stdio.h>
-#include<stdint.h>
-#include<stdbool.h>
-#include<malloc.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
 
-#ifndef _CBFIFO_H_
-#define _CBFIFO_H_ 
+#include "cbfifo.h"
 
-#define capacity 128
+#define CAPACITY 128
 
 struct cbfifo_s			//circular buffer structure
 {
@@ -27,43 +25,32 @@ static struct cbfifo_s a;	//cicular buffer structure instance
 size_t cbfifo_enqueue(void *buf, size_t nbytes)
 {
   char *buff = (char *) buf;
-  int i=0;  
-  if(nbytes < 0)
-	return -1;
+  int i=0;
   
-  else
-    {
-      if(buff == NULL)
-	return -1;
+  if (nbytes < 0)   // clause cannot be true
+    return -1;
+  
+  if(buff == NULL)
+    return -1;
 
-      else
-      {
-        if((a.read == a.write)&&(a.is_full==1))		//Buffer Full
-        {
-          a.write = 0; a.read = 0; a.is_full = 0; a.len = 0;	
-          return 0;				
-        }
+  if((a.read == a.write)&&(a.is_full==1))		//Buffer Full
+    //    a.write = 0; a.read = 0; a.is_full = 0; a.len = 0;	
+    return 0;				
 
-        else
-	{
-	  if(nbytes > (capacity) - (a.len))   //if nbytes > remaining size of buf
-	    nbytes = (capacity) - (a.len);
-	  else
-	    nbytes = nbytes;
-	  
-	  for(i=0;i<nbytes;i++)			//writing to the buffer
-	  {
-	    a.buffer[a.write] =  buff[i];
-	    a.write = (a.write + 1) & (capacity-1);
-	    a.len++;
-	    //printf("***len = %zu\n", a.len);
-	  }
-	  //printf("enq*length = %zu\n", a.len);
-   	  return nbytes;
-	}
-      }
+  // now time to actually do the enqueing
+  if(nbytes > (CAPACITY) - (a.len))   //if nbytes > remaining size of buf
+    nbytes = (CAPACITY) - (a.len);
+
+  for(i=0; i<nbytes; i++)		//writing to the buffer
+  {
+    a.buffer[a.write] =  buff[i];
+    a.write = (a.write + 1) & (CAPACITY-1);
+    a.len++;
+    //printf("***len = %zu\n", a.len);
+  }
+  //printf("enq*length = %zu\n", a.len);
+  return nbytes;
    
-    }
 }
 
 
@@ -124,7 +111,7 @@ size_t cbfifo_length()
 
 size_t cbfifo_capacity()
 {
-  return capacity;
+  return CAPACITY;
 }
 
 #endif

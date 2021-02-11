@@ -1,5 +1,5 @@
-#include "test_llfifo.c"
-#include "test_cbfifo.c"
+#include "test_llfifo.h"
+#include "test_cbfifo.h"
 
 
 int main()
